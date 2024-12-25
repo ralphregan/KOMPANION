@@ -2,7 +2,7 @@
   "name": "myproject",
   "version": "1.0.0",
   "scripts": {
-    "build:client": "cd client && npm install && npm run build && npx react-scripts build",
+    "build:client": "cd client && npm install -g react-scripts && npm install && npx react-scripts build",
     "build:server": "cd server && npm install",
     "start:server": "cd server && npm start"
   }
