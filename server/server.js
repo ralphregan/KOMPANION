@@ -1,19 +1,20 @@
 import express from "express";
 import mongoose from "mongoose";
 import pg from "pg";
-
+import 'dotenv/config'
 import axios from "axios";
 import bodyParser from "body-parser";
 import cors from "cors";
 
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "YourCompanion",
-  password: "reganralph",
-  port: 5432,
+  user: process.env.DB_USER,
+  host:process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT ,
 });
+
 db.connect();
 const uri = "mongodb://127.0.0.1:27017";
 mongoose.connect(`${uri}/weatherapp`, {
@@ -43,11 +44,10 @@ const Weather = mongoose.model("Weather", usersWeather);
 const Note = mongoose.model("Notes", userNote);
 
 const App = express();
-const port = 5000;
-const Api = "https://api.openweathermap.org/data/2.5/weather?";
+const port = process.env.PORT 
+const Api = process.env.OPEN_WEATHER_API ;
 const openMateoAPI = "https://archive-api.open-meteo.com/v1/era5?";
-const ApiKey =
-  process.env.OPEN_WEATHER_API_KEY || "6c0afe19f864baed75521173dda75009";
+const ApiKey = process.env.OPEN_WEATHER_API_KEY ;
 
 App.use(cors());
 App.use(express.urlencoded({ extended: true }));
