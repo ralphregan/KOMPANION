@@ -1,21 +1,24 @@
 import express from "express";
 import mongoose from "mongoose";
-import pg from "pg";
+import {Pool} from "pg";
 import 'dotenv/config'
 import axios from "axios";
 import bodyParser from "body-parser";
 import cors from "cors";
 
 
-const db = new pg.Client({
-  user: process.env.DB_USER,
-  host:process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT ,
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL, ssl:{rejectUnauthorized: false}
+  // user: process.env.DB_USER,
+  // host:process.env.DB_HOST,
+  // database: process.env.DB_DATABASE,
+  // password: process.env.DB_PASSWORD,
+  // port: process.env.DB_PORT ,
 });
 
-db.connect();
+db.connect()
+  .then(() => console.log("Connected to PostgreSQL"))
+  .catch(err => console.error("PostgreSQL connection error:", err));
 const uri = "mongodb://127.0.0.1:27017";
 mongoose.connect(`${uri}/weatherapp`, {
   useNewUrlParser: true,
