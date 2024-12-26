@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
-import {Pool} from "pg";
+import pkg from 'pg';
 import 'dotenv/config'
 import axios from "axios";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-
+const {Pool} = pkg;
 const db = new Pool({
   connectionString: process.env.DATABASE_URL, ssl:{rejectUnauthorized: false}
   // user: process.env.DB_USER,
