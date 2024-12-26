@@ -1,14 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
-import pkg from 'pg';
-import 'dotenv/config'
+import pkg from "pg";
+import "dotenv/config";
 import axios from "axios";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-const {Pool} = pkg;
+const { Pool } = pkg;
 const db = new Pool({
-  connectionString: process.env.DATABASE_URL, ssl:{rejectUnauthorized: false}
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
   // user: process.env.DB_USER,
   // host:process.env.DB_HOST,
   // database: process.env.DB_DATABASE,
@@ -18,17 +19,19 @@ const db = new Pool({
 
 db.connect()
   .then(() => console.log("Connected to PostgreSQL"))
-  .catch(err => console.error("PostgreSQL connection error:", err));
+  .catch((err) => console.error("PostgreSQL connection error:", err));
 const uri = process.env.MONGO_URI;
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log("Connected to MongoDB Atlas");
-})
-.catch((err) => {
-  console.error("MongoDB Atlas connection error:", err);
-});
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB Atlas");
+  })
+  .catch((err) => {
+    console.error("MongoDB Atlas connection error:", err);
+  });
 
 const usersWeather = new mongoose.Schema({
   temp: Number,
@@ -52,16 +55,20 @@ const Weather = mongoose.model("Weather", usersWeather);
 const Note = mongoose.model("Notes", userNote);
 
 const App = express();
-const port = process.env.PORT 
-const Api = process.env.OPEN_WEATHER_API ;
+const port = process.env.PORT;
+const Api = process.env.OPEN_WEATHER_API;
 const openMateoAPI = "https://archive-api.open-meteo.com/v1/era5?";
-const ApiKey = process.env.OPEN_WEATHER_API_KEY ;
+const ApiKey = process.env.OPEN_WEATHER_API_KEY;
 
-App.use(cors({
-    origin: 'https://enchanting-sable-0da2d1.netlify.app/', // Replace with your actual Netlify app URL
-    methods: ['GET', 'POST'], // Define allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+App.use(
+  cors({
+    origin: "https://kompanion.netlify.app/", // Replace with your actual Netlify app URL
+    methods: ["GET", "POST"], // Define allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+)
+  .then(() => console.log("i am connected to netlify"))
+  .catch((err) => console.log("there is an err connecting to netlify", err));
 App.use(express.urlencoded({ extended: true }));
 App.use(express.json());
 
@@ -169,33 +176,37 @@ App.post("/note", async (req, res) => {
   res.status(200).send({ message: "Note received successfully", data: Input });
 });
 
-
-App.post("/Register", async(req, res)=>{
-const data = req.body.register
-const {user} = data
-console.log(user)
-
-try {
-  const response = await db.query('INSERT INTO users (email, password) VALUES ($1, $2)  RETURNING *',[user.email, user.password] )
-  console.log(response.rows)
-
-  res.status(200).send({message: "Registration Approved", })
-} catch (error) {
-  res.status(400).send({message: "Registration failed"})
-}
-
-})
-App.post("/Login", async(req, res)=>{
-  const data = req.body.login
-  const {user} = data
+App.post("/Register", async (req, res) => {
+  const data = req.body.register;
+  const { user } = data;
+  console.log(user);
 
   try {
-    const response = await db.query("SELECT * FROM users WHERE email = $1 AND password = $2" , [user.email, user.password])
-    res.status(200).send({message: "Login Approved"})
+    const response = await db.query(
+      "INSERT INTO users (email, password) VALUES ($1, $2)  RETURNING *",
+      [user.email, user.password]
+    );
+    console.log(response.rows);
+
+    res.status(200).send({ message: "Registration Approved" });
   } catch (error) {
-    res.status(400).send({message: "Lgoin failed"})
+    res.status(400).send({ message: "Registration failed" });
   }
-})
+});
+App.post("/Login", async (req, res) => {
+  const data = req.body.login;
+  const { user } = data;
+
+  try {
+    const response = await db.query(
+      "SELECT * FROM users WHERE email = $1 AND password = $2",
+      [user.email, user.password]
+    );
+    res.status(200).send({ message: "Login Approved" });
+  } catch (error) {
+    res.status(400).send({ message: "Lgoin failed" });
+  }
+});
 
 App.listen(port, () => {
   console.log(`Server listening on port http://localhost:${port}`);
