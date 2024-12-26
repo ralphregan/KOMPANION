@@ -67,8 +67,7 @@ App.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 )
-  .then(() => console.log("i am connected to netlify"))
-  .catch((err) => console.log("there is an err connecting to netlify", err));
+
 App.use(express.urlencoded({ extended: true }));
 App.use(express.json());
 
