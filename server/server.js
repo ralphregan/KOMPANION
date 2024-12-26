@@ -57,7 +57,11 @@ const Api = process.env.OPEN_WEATHER_API ;
 const openMateoAPI = "https://archive-api.open-meteo.com/v1/era5?";
 const ApiKey = process.env.OPEN_WEATHER_API_KEY ;
 
-App.use(cors());
+App.use(cors({
+    origin: 'https://enchanting-sable-0da2d1.netlify.app/', // Replace with your actual Netlify app URL
+    methods: ['GET', 'POST'], // Define allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 App.use(express.urlencoded({ extended: true }));
 App.use(express.json());
 
