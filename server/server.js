@@ -19,10 +19,15 @@ const db = new Pool({
 db.connect()
   .then(() => console.log("Connected to PostgreSQL"))
   .catch(err => console.error("PostgreSQL connection error:", err));
-const uri = "mongodb://127.0.0.1:27017";
-mongoose.connect(`${uri}/weatherapp`, {
+const uri = process.env.MONGO_URI;
+mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(() => {
+  console.log("Connected to MongoDB Atlas");
+})
+.catch((err) => {
+  console.error("MongoDB Atlas connection error:", err);
 });
 
 const usersWeather = new mongoose.Schema({
