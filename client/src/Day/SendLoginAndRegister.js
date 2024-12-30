@@ -4,7 +4,7 @@ import axios from "axios"
 
 const api = axios.create({
     baseURL: 'https://server-jdh7.onrender.com',
-    withCredentials: true // if you're using cookies
+    withCredentials: true
 })
 export default function SendRegister({Data, dispatch, hasSent}) {
  const navigate = useNavigate()
@@ -31,8 +31,8 @@ async function send() {
     const response = await api.post(endpoint, Data)
     const result = response.data 
     console.log(result)
-    dispatch({ type: "SEND_SUCCESS", payload: result });
-    if(Data.login) navigate("/day",{replace: true})
+    await dispatch({ type: "SEND_SUCCESS", payload: result });
+    if(Data.login) await navigate("/day",{replace: true})
 } catch (error) {
     console.log("there is an err", error)
  
